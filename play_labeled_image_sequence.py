@@ -11,13 +11,13 @@ or 'jpg'), and the frame rate from the command line.
 Usage Instructions:
 -------------------
 Run the script from the command line as follows:
-    $ python3 image_sequence_player.py --input_dir /path/to/images --annotations /path/to/annotations.json --format jpg --fps 24
+    py play_labeled_image_sequence.py /path/to/images /path/to/annotations.json jpg --fps 60
 
 License:
 --------
 MIT License
 
-Copyright (c) 2023 10XTMY, molmez.io
+Copyright (c) 2023 @10XTMY, molmez.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,18 +45,18 @@ import json
 
 
 def arg_parser() -> argparse.Namespace:
-    """Parse command line arguments."""
+    """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="Program to play a sequence of images as a video with annotations.")
-    parser.add_argument('--input_dir', type=str, required=True, help="Path to the image directory")
-    parser.add_argument('--annotations', type=str, required=True, help="Path to the COCO-format annotations file")
-    parser.add_argument('--format', type=str, choices=['png', 'jpg'], required=True, help="Image format ('png' or 'jpg')")
-    parser.add_argument('--fps', type=int, default=24, help="Frame rate (frames per second)")
+    parser.add_argument('input_dir', type=str, help="Path to the image directory")
+    parser.add_argument('annotations', type=str, help="Path to the COCO-format annotations file")
+    parser.add_argument('format', type=str, choices=['png', 'jpg'], help="Image format ('png' or 'jpg')")
+    parser.add_argument('--fps', type=int, default=25, help="Frame rate (frames per second)")
     return parser.parse_args()
 
 
 def draw_annotations(image, annotations):
-    """Draw bounding boxes for a list of annotations on the image."""
-    # Create a fresh copy of the image
+    """Draw bounding boxes for a list of annotations on the image"""
+    # create a fresh copy of the image
     image_copy = image.copy()
 
     for ann in annotations:
@@ -70,7 +70,7 @@ def draw_annotations(image, annotations):
 
 
 def play_image_sequence(input_dir: str, annotation_file: str, image_format: str, fps: int) -> None:
-    """Play a sequence of images as a video with annotations."""
+    """Play a sequence of images as a video with annotations"""
     image_files = [f for f in sorted(os.listdir(input_dir)) if f.lower().endswith(f'.{image_format}')]
 
     if not image_files:

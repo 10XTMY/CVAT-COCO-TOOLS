@@ -4,16 +4,16 @@ This script takes in the source annotation file, source image directory,
 output directory, and split ratio as arguments. The output directory should
 be the parent directory where the images and annotations directories will be created.
 
-Usage:
-    python split_cvat_coco.py path_to_annotation_file path_to_image_dir path_to_output_dir --split_ratio 0.8
+Usage Instructions:
+-------------------
+Run the script from the command line as follows:
+    py split_cvat_coco.py path/to/images path/to/annotation.json output/path --split_ratio 0.8
 
-where:
-- 'split_ratio' is used to define the proportion of the dataset to be used for training (default is 0.8).
-- 'src_annotation_file' is the source annotation json file.
-- 'src_image_dir' is the directory where source images are stored.
-- 'output_dir' is the desired output directory. The script will create 'images' and 'annotations' subdirectories in it.
+License:
+-------
+MIT License
 
-Copyright (c) 2023 10XTMY, molmez.io
+Copyright (c) 2023 @10XTMY, molmez.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,10 +45,10 @@ from typing import List, Dict, Set, Tuple
 
 
 def arg_parser() -> argparse.Namespace:
-    """Parse command line arguments."""
+    """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="Program to split dataset for training and validation.")
-    parser.add_argument('src_annotation_file', help="Path to the source annotation file")
     parser.add_argument('src_image_dir', help="Path to the source image directory")
+    parser.add_argument('src_annotation_file', help="Path to the source annotation file")
     parser.add_argument('output_dir', help="Path to the output directory")
     parser.add_argument('--split_ratio', type=float, default=0.8,
                         help='The proportion of the dataset that should be used for training')
@@ -60,11 +60,11 @@ def split_dataset(images: List[Dict], annotations: List[Dict],
     """
     Splits the dataset into training and validation sets based on the provided image ids.
 
-    :param images: A list of dictionaries representing images
-    :param annotations: A list of dictionaries representing annotations
-    :param train_ids: A set of image ids to be used for the training set
-    :param val_ids: A set of image ids to be used for the validation set
-    :return: A tuple of lists: training images, validation images, training annotations and validation annotations
+    :param images: list of dictionaries representing images
+    :param annotations: list of dictionaries representing annotations
+    :param train_ids: set of image ids to be used for the training set
+    :param val_ids: set of image ids to be used for the validation set
+    :return: a tuple of lists: training images, validation images, training annotations, and validation annotations
     """
 
     print('splitting images...')
@@ -83,13 +83,13 @@ def save_files_and_move_images(data: Dict, image_list: List[Dict], annotation_li
     """
     Saves the annotations as json files and moves the images to the output directory.
 
-    :param data: A dictionary representing the source annotation file
-    :param image_list: A list of dictionaries representing images
-    :param annotation_list: A list of dictionaries representing annotations
-    :param folder: A string representing the folder name (train or val)
-    :param file_name: A string representing the output file name
-    :param src_image_dir: A string representing the source image directory
-    :param output_dir: A string representing the output directory
+    :param data: dictionary representing the source annotation file
+    :param image_list: list of dictionaries representing images
+    :param annotation_list: list of dictionaries representing annotations
+    :param folder: folder name (train or val)
+    :param file_name: output file name
+    :param src_image_dir: path to the source image directory
+    :param output_dir: path to the output directory
     """
 
     print('moving images...')
@@ -112,10 +112,10 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
     """
     Checks that the train and val json files are valid and all images referenced in them exist.
 
-    :param train_json_path: A string representing the path to the training json file
-    :param val_json_path: A string representing the path to the validation json file
-    :param train_img_dir: A string representing the directory of the training images
-    :param val_img_dir: A string representing the directory of the validation images
+    :param train_json_path: path to the training annotation file
+    :param val_json_path: path to the validation annotation file
+    :param train_img_dir: path to the directory of training images
+    :param val_img_dir: path to the directory of validation images
     """
 
     for json_path, img_dir, data_name in [(train_json_path, train_img_dir, 'train'),
@@ -134,7 +134,7 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
 
         # check if there are annotation image_ids that don't correspond to an image in the same file
         if not annotation_image_ids.issubset(image_ids):
-            print(f'There are annotation image_ids in {data_name}.json that don\'t correspond to an image.')
+            print(f'there are annotation image_ids in {data_name}.json that don\'t correspond to an image.')
 
         # check if all image files exist
         image_files = {image['file_name'] for image in data['images']}
@@ -142,7 +142,7 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
 
         missing_files = image_files.difference(existing_files)
         if missing_files:
-            print(f'The following files listed in {data_name}.json are missing in the {data_name} image directory:')
+            print(f'the following files listed in {data_name}.json are missing in the {data_name} image directory:')
             for missing_file in missing_files:
                 print(missing_file)
 
@@ -150,7 +150,7 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
 
 
 def main() -> None:
-    """Main function."""
+    """Main function"""
 
     args = arg_parser()
 

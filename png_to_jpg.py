@@ -17,13 +17,13 @@ Usage Instructions:
 ------------------
 Place this script in the directory you want to convert images in. Run it from
 the command line as follows:
-    $ python3 png_to_jpg.py
+    py png_to_jpg.py
 
 License:
 -------
 MIT License
 
-Copyright (c) 2023 10XTMY, molmez.io
+Copyright (c) 2023 @10XTMY, molmez.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ input_dir = os.getcwd()
 
 
 def main() -> None:
-    """Main function."""
+    """Main function"""
 
     for dir_data in os.walk(input_dir):
         dir_path, folders, files = dir_data

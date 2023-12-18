@@ -5,16 +5,15 @@ The script accepts command-line arguments for input and output directories,
 an annotation file in COCOv1 format, and a desired resolution for images.
 If the output directory does not exist, it will be created.
 
-Example usage:
-python convert_coco_resolution.py input_directory_path output_directory_path annotation_file.json --resolution 800 800
+Usage Instructions:
+-------------------
+Run the script from the command line as follows:
+    py convert_coco_resolution.py path/to/images output/path path/to/annotation.json --resolution 800 800
 
-Where:
-- 'input_directory_path' is the path to the directory containing the images you wish to resize.
-- 'output_directory_path' is the path to the directory to save the resized images and adjusted annotations.
-- 'annotation_file.json' is the name of the COCOv1 formatted annotation file that the script will adjust.
-- '--resolution 512 512' is an optional argument specifying the desired resolution the default is 512x512
-
-Copyright (c) 2023 10XTMY, molmez.io
+License:
+-------
+MIT License
+Copyright (c) 2023 @10XTMY, molmez.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +47,8 @@ def resize_images(input_dir: str, output_dir: str, resolution: Union[Tuple[int, 
     """
     Resize the images in the input directory and save them to the output directory.
 
-    :param input_dir: Directory where original images are stored.
-    :param output_dir: Directory where resized images will be stored.
+    :param input_dir: path to image directory.
+    :param output_dir: path to output directory.
     :param resolution: Tuple or list of two integers, denoting the desired image resolution (width, height).
     :return: None
     """
@@ -84,19 +83,18 @@ def adjust_annotations(annotation_file: str, output_dir: str, resolution: Union[
     """
     Adjust the bounding box coordinates in the COCO annotations.
 
-    :param annotation_file: Path to the original annotation file.
+    :param annotation_file: path to the original annotation file.
     :param resolution: Tuple or list of two integers, denoting the desired image resolution (width, height).
-    :param output_dir: Directory where adjusted annotation file will be stored.
-    :return: Path to the adjusted annotation file.
+    :param output_dir: path to the output directory.
+    :return: path to the adjusted annotation file.
     """
-
-    # create the output directory if it doesn't exist
-    output_dir = os.path.join(output_dir, 'annotations')
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
     output_file = os.path.splitext(os.path.basename(annotation_file))[0] + '_adjusted.json'
     output_path = os.path.join(output_dir, output_file)
+
+    # create the output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     # load the COCO annotations from the JSON file
     try:
@@ -145,8 +143,8 @@ def draw_bounding_boxes(image_dir: str, annotation_file: str) -> None:
     """
     Draw the bounding boxes on the first image.
 
-    :param image_dir: Directory where images are stored.
-    :param annotation_file: Path to the annotation file.
+    :param image_dir: path to the image directory.
+    :param annotation_file: path to the annotation file.
     :return: None
     """
 
@@ -197,7 +195,7 @@ def draw_bounding_boxes(image_dir: str, annotation_file: str) -> None:
 
 
 def main():
-    """Main function."""
+    """Main function"""
 
     # argument parser
     parser = argparse.ArgumentParser(description='Image and annotation resizing script')
@@ -212,7 +210,7 @@ def main():
 
     # check if the input directory exists
     if not os.path.exists(args.input_dir):
-        print(f"Error: Input directory '{args.input_dir}' does not exist")
+        print(f"error: Input directory '{args.input_dir}' does not exist")
         return
 
     # check if the output directory exists or create it
@@ -221,7 +219,7 @@ def main():
 
     # check if the annotation file exists
     if not os.path.isfile(args.annotation_file):
-        print(f"Error: Annotation file '{args.annotation_file}' does not exist")
+        print(f"error: Annotation file '{args.annotation_file}' does not exist")
         return
 
     # create separate directories for images and annotations

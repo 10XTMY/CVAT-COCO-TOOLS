@@ -12,15 +12,15 @@ The script uses argparse for command line argument parsing, allowing users
 to specify the image directory and annotation file to be cleaned.
 
 Usage Instructions:
-------------------
+-------------------
 Run the script from the command line as follows:
-    $ python3 coco_cleaner.py --input_image_directory /path/to/images --input_annotation_file /path/to/annotations.json
+    py remove_empty_annotation_files.py /path/to/images /path/to/annotations.json
 
 License:
 -------
 MIT License
 
-Copyright (c) 2023 10XTMY, molmez.io
+Copyright (c) 2023 @10XTMY, molmez.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,27 +48,27 @@ import shutil
 
 
 def arg_parser() -> argparse.Namespace:
-    """Parse command line arguments."""
+    """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Program to clean COCO dataset by removing unannotated images.')
-    parser.add_argument('--input_image_directory', type=str, required=True, help='Image directory to be cleaned')
-    parser.add_argument('--input_annotation_file', type=str, required=True, help='Path to the annotation file')
+    parser.add_argument('input_image_directory', type=str, help='Image directory to be cleaned')
+    parser.add_argument('input_annotation_file', type=str, help='Path to the annotation file')
     return parser.parse_args()
 
 
 def load_annotations(file_path: str) -> dict:
-    """Load the COCO annotations from file."""
+    """Load the COCO annotations from file"""
     with open(file_path, 'r') as f:
         return json.load(f)
 
 
 def save_annotations(annotations: dict, file_path: str) -> None:
-    """Save annotations to a file."""
+    """Save annotations to a file"""
     with open(file_path, 'w') as f:
         json.dump(annotations, f)
 
 
 def main() -> None:
-    """Main function."""
+    """Main function"""
     args = arg_parser()
 
     image_dir = args.input_image_directory
@@ -86,18 +86,22 @@ def main() -> None:
     # find the image ids that do not have annotations
     unannotated_image_ids = set(image_dict.keys()) - annotated_image_ids
 
-    # create a list of image file names that do not have annotations
-    unannotated_image_files = [image_dict[image_id] for image_id in unannotated_image_ids]
-
-    # remove the unannotated images from the annotations
-    annotations['images'] = [image for image in annotations['images'] if image['id'] in annotated_image_ids]
+    # filter out images that do not exist and update annotations
+    existing_unannotated_image_files = []
+    for image_id in unannotated_image_ids:
+        file_name = image_dict[image_id]
+        if os.path.exists(os.path.join(image_dir, file_name)):
+            existing_unannotated_image_files.append(file_name)
+        else:
+            print(f"file {file_name} does not exist and will be removed from annotations.")
+            annotations['images'] = [image for image in annotations['images'] if image['id'] != image_id]
 
     # save the new annotations
     save_annotations(annotations, os.path.join(os.path.dirname(annotation_file), 'new_annotations.json'))
 
-    # move the unannotated image files to a _trash directory
+    # move the existing unannotated image files to a _trash directory
     os.makedirs(os.path.join(image_dir, '_trash'), exist_ok=True)
-    for file_name in unannotated_image_files:
+    for file_name in existing_unannotated_image_files:
         shutil.move(os.path.join(image_dir, file_name), os.path.join(image_dir, '_trash', file_name))
 
 
