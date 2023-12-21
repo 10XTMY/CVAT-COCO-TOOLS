@@ -78,16 +78,16 @@ def split_dataset(images: List[Dict], annotations: List[Dict],
     return train_images, val_images, train_annotations, val_annotations
 
 
-def save_files_and_move_images(data: Dict, image_list: List[Dict], annotation_list: List[Dict], folder: str,
-                               file_name: str, src_image_dir: str, output_dir: str) -> None:
+def save_files_and_move_images(annotation_data: Dict, image_list: List[Dict], annotation_list: List[Dict], folder: str,
+                               annotation_file_name: str, src_image_dir: str, output_dir: str) -> None:
     """
     Saves the annotations as json files and moves the images to the output directory.
 
-    :param data: dictionary representing the source annotation file
+    :param annotation_data: dictionary representing the source annotation file
     :param image_list: list of dictionaries representing images
     :param annotation_list: list of dictionaries representing annotations
     :param folder: folder name (train or val)
-    :param file_name: output file name
+    :param annotation_file_name: output file name
     :param src_image_dir: path to the source image directory
     :param output_dir: path to the output directory
     """
@@ -97,12 +97,12 @@ def save_files_and_move_images(data: Dict, image_list: List[Dict], annotation_li
         shutil.move(os.path.join(src_image_dir, image['file_name']), os.path.join(output_dir, 'images', folder))
 
     print('saving annotations...')
-    json_path = os.path.join(output_dir, 'annotations', file_name)
+    json_path = os.path.join(output_dir, 'annotations', annotation_file_name)
     with open(json_path, 'w') as json_file:
         json.dump({
-            'licenses': data['licenses'],
-            'info': data['info'],
-            'categories': data['categories'],
+            'licenses': annotation_data['licenses'],
+            'info': annotation_data['info'],
+            'categories': annotation_data['categories'],
             'images': image_list,
             'annotations': annotation_list
         }, json_file)
@@ -118,6 +118,8 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
     :param val_img_dir: path to the directory of validation images
     """
 
+    success = True
+
     for json_path, img_dir, data_name in [(train_json_path, train_img_dir, 'train'),
                                           (val_json_path, val_img_dir, 'val')]:
         with open(json_path, "r") as f:
@@ -127,14 +129,16 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
         for key in ['licenses', 'info', 'categories', 'images', 'annotations']:
             if key not in data:
                 print(f'{data_name}.json is missing key: {key}')
+                success = False
 
-        # create set of image_ids in images and annotations
+        # create set of image_ids and annotation ids
         image_ids = {image['id'] for image in data['images']}
         annotation_image_ids = {annotation['image_id'] for annotation in data['annotations']}
 
         # check if there are annotation image_ids that don't correspond to an image in the same file
         if not annotation_image_ids.issubset(image_ids):
             print(f'there are annotation image_ids in {data_name}.json that don\'t correspond to an image.')
+            success = False
 
         # check if all image files exist
         image_files = {image['file_name'] for image in data['images']}
@@ -145,8 +149,12 @@ def validate_split(train_json_path: str, val_json_path: str, train_img_dir: str,
             print(f'the following files listed in {data_name}.json are missing in the {data_name} image directory:')
             for missing_file in missing_files:
                 print(missing_file)
+            success = False
 
-    print('Output files validation complete. Successfully split dataset.')
+    if not success:
+        raise Exception('Output files validation failed.')
+    else:
+        print('Output files validation complete. Successfully split dataset.')
 
 
 def main() -> None:

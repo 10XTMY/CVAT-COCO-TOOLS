@@ -54,8 +54,12 @@ input_dir = os.getcwd()
 def main() -> None:
     """Main function"""
 
-    for dir_data in os.walk(input_dir):
-        dir_path, folders, files = dir_data
+    # uncomment below to use the current working directory only
+    # dir_path = input_dir
+    # files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+
+    for dir_data in os.walk(input_dir):  # comment out this line to use the current working directory only
+        dir_path, folders, files = dir_data  # comment out this line to use the current working directory only
         for image_file in tqdm(files):
             if image_file.lower().endswith('.png'):
                 image = cv2.imread(f'{dir_path}\{image_file}')

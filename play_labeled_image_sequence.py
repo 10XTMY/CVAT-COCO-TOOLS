@@ -42,6 +42,7 @@ import argparse
 import cv2
 import os
 import json
+import sys
 
 
 def arg_parser() -> argparse.Namespace:
@@ -74,7 +75,8 @@ def play_image_sequence(input_dir: str, annotation_file: str, image_format: str,
     image_files = [f for f in sorted(os.listdir(input_dir)) if f.lower().endswith(f'.{image_format}')]
 
     if not image_files:
-        raise ValueError(f"No images found in {input_dir} with format .{image_format}")
+        print(f'No images found in {input_dir}')
+        sys.exit(1)
 
     with open(annotation_file) as f:
         annotations_data = json.load(f)

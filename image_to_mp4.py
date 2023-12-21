@@ -85,9 +85,10 @@ def main():
                 frame = cv2.imread(str(frame_path))
                 if frame is not None:
                     frame = cv2.resize(frame, (w, h))
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     try:
-                        writer.write(np.array(frame)[:, :, ::-1])
+                        # writer.write(np.array(frame)[:, :, ::-1])
+                        writer.write(frame)
                     except Exception as error:
                         print(error)
                         traceback.print_exc()

@@ -19,13 +19,13 @@ Tensorflow 2 Object Detection API (required for the sharding script)
 
 Please watch the YouTube video for a detailed explanation :)
 
-[Watch the Video on YouTube](https://www.youtube.com/watch?v=VIDEO_ID)
+[Watch the Video on YouTube](https://youtu.be/17yUMMoTRfg)
 
 ## License
 
 MIT License
 
-Copyright (c) 2023 @10XTMY, molmez.io
+Copyright (c) 2023 @10XTMY, [molmez.io](https://www.molmez.io)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

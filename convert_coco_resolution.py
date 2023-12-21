@@ -36,6 +36,8 @@ SOFTWARE.
 
 
 import os
+import sys
+
 import cv2
 import json
 import argparse
@@ -57,26 +59,26 @@ def resize_images(input_dir: str, output_dir: str, resolution: Union[Tuple[int, 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # walk through the directory tree
-    for root, _, files in os.walk(input_dir):
-        for file in tqdm(files, desc='Resizing Images'):
+    # list files in the input directory
+    files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
 
-            # check if the file is a PNG or JPG image
-            if file.lower().endswith(('.png', '.jpg')):
-                try:
-                    # read the image
-                    image_path = os.path.join(root, file)
-                    img = cv2.imread(image_path)
+    for file in tqdm(files, desc='Resizing Images'):
+        # check if the file is a PNG or JPG image
+        if file.lower().endswith(('.png', '.jpg')):
+            try:
+                # read the image
+                image_path = os.path.join(input_dir, file)
+                img = cv2.imread(image_path)
 
-                    # resize the image
-                    resized_img = cv2.resize(img, resolution)
+                # resize the image
+                resized_img = cv2.resize(img, resolution)
 
-                    # save the resized image to the output directory
-                    output_path = os.path.join(output_dir, file)
-                    cv2.imwrite(output_path, resized_img)
+                # save the resized image to the output directory
+                output_path = os.path.join(output_dir, file)
+                cv2.imwrite(output_path, resized_img)
 
-                except (cv2.error, IOError) as e:
-                    print(f"error resizing image '{file}': {str(e)}")
+            except (cv2.error, IOError) as e:
+                print(f"error resizing image '{file}': {str(e)}")
 
 
 def adjust_annotations(annotation_file: str, output_dir: str, resolution: Union[Tuple[int, int], List[int]]) -> str:
@@ -88,9 +90,6 @@ def adjust_annotations(annotation_file: str, output_dir: str, resolution: Union[
     :param output_dir: path to the output directory.
     :return: path to the adjusted annotation file.
     """
-
-    output_file = os.path.splitext(os.path.basename(annotation_file))[0] + '_adjusted.json'
-    output_path = os.path.join(output_dir, output_file)
 
     # create the output directory if it doesn't exist
     if not os.path.exists(output_dir):
@@ -211,7 +210,7 @@ def main():
     # check if the input directory exists
     if not os.path.exists(args.input_dir):
         print(f"error: Input directory '{args.input_dir}' does not exist")
-        return
+        sys.exit(1)
 
     # check if the output directory exists or create it
     if not os.path.exists(args.output_dir):
@@ -220,7 +219,7 @@ def main():
     # check if the annotation file exists
     if not os.path.isfile(args.annotation_file):
         print(f"error: Annotation file '{args.annotation_file}' does not exist")
-        return
+        sys.exit(1)
 
     # create separate directories for images and annotations
     images_output_dir = os.path.join(args.output_dir, 'images')
