@@ -19,7 +19,7 @@ Tensorflow 2 Object Detection API (required for the sharding script)
 
 Please watch the YouTube video for a detailed explanation :)
 
-[Watch the Video on YouTube](https://youtu.be/17yUMMoTRfg)
+[<img src="https://img.youtube.com/vi/17yUMMoTRfg/maxresdefault.jpg" width="50%">](https://youtu.be/17yUMMoTRfg)
 
 ## License
 
